@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RecallMate Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="max-w-4xl mx-auto text-center py-16">
+    <h1 class="text-4xl font-bold text-blue-700 mb-8">👋 Welcome to RecallMate</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <a href="/face-recognition" class="bg-white p-6 rounded-xl shadow hover:bg-blue-50">
+        👤 <h2 class="text-xl font-semibold mt-2">Face Recognition</h2>
+      </a>
+
+      <a href="/emotion-logger" class="bg-white p-6 rounded-xl shadow hover:bg-blue-50">
+        😊 <h2 class="text-xl font-semibold mt-2">Emotion Logger</h2>
+      </a>
+
+      <a href="/reminders" class="bg-white p-6 rounded-xl shadow hover:bg-blue-50">
+        ⏰ <h2 class="text-xl font-semibold mt-2">Reminder Checker</h2>
+      </a>
+
+      <a href="/caregiver-dashboard" class="bg-white p-6 rounded-xl shadow hover:bg-blue-50">
+        🧑‍⚕️ <h2 class="text-xl font-semibold mt-2">Caregiver Dashboard</h2>
+      </a>
+
+      <form action="/emergency" method="post" class="bg-red-100 p-6 rounded-xl shadow hover:bg-red-200">
+        🚨 <button type="submit" class="text-xl font-semibold text-red-700">Emergency Button</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
