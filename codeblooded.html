@@ -1,0 +1,80 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>Emergency Comfort Button</title>
+ <style>
+ body {
+ font-family: 'Segoe UI', sans-serif;
+ text-align: center;
+ padding-top: 60px;
+ transition: background-color 1s;
+ background-color: white;
+ }
+ #comfortBtn {
+ padding: 20px 40px;
+ font-size: 22px;
+ background-color: red;
+ color: white;
+ border: none;
+ border-radius: 10px;
+ cursor: pointer;
+ }
+ #message {
+ margin-top: 30px;
+ font-size: 24px;
+ color: teal;
+ display: none;
+ }
+ #breatheCircle {
+ width: 100px;
+ height: 100px;
+ margin: 30px auto;
+ background-color: #b2ebf2;
+ border-radius: 50%;
+ animation: breathe 6s ease-in-out infinite;
+ display: none;
+ }
+ @keyframes breathe {
+ 0% { transform: scale(1); opacity: 0.7; }
+ 50% { transform: scale(1.5); opacity: 1; }
+ 100% { transform: scale(1); opacity: 0.7; }
+ }
+ </style>
+</head>
+<body>
+ <h1>Emergency Comfort</h1>
+ <button id="comfortBtn" onclick="activateComfort()">Emergency Comfort</button>
+ <p id="message">You're safe. Breathe in... Breathe out...</p>
+ <div id="breatheCircle"></div>
+ <audio id="calmAudio" src="calm.mp3 - Copy.mp3"></audio>
+ <script>
+ function activateComfort() {
+ const audio = document.getElementById("calmAudio");
+ const msg = document.getElementById("message");
+ const btn = document.getElementById("comfortBtn");
+ const circle = document.getElementById("breatheCircle");
+ audio.play();
+ msg.style.display = "block";
+ circle.style.display = "block";
+ document.body.style.backgroundColor = "#e0f7fa";
+ btn.innerText = "Stop Comfort Mode";
+ btn.onclick = stopComfort;
+ }
+ function stopComfort() {
+ const audio = document.getElementById("calmAudio");
+ const msg = document.getElementById("message");
+ const btn = document.getElementById("comfortBtn");
+ const circle = document.getElementById("breatheCircle");
+ audio.pause();
+ audio.currentTime = 0;
+ msg.style.display = "none";
+ circle.style.display = "none";
+ document.body.style.backgroundColor = "white";
+ btn.innerText = "Emergency Comfort";
+ btn.onclick = activateComfort;
+ }
+ </script>
+</body>
+</html>
