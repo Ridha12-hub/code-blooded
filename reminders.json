@@ -1,0 +1,24 @@
+{
+  "Monday": [
+    {
+      "completed": true,
+      "lastAlertHour": null,
+      "text": "hi",
+      "time": "00:00"
+    },
+    {
+      "completed": true,
+      "lastAlertHour": null,
+      "text": "hello",
+      "time": "00:00"
+    }
+  ],
+  "Wednesday": [
+    {
+      "time": "14:50",
+      "text": "New reminder.",
+      "completed": false,
+      "lastAlertHour": null
+    }
+  ]
+}

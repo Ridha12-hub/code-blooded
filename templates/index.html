@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daily Reminder App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>🗓️ Daily Reminder App 🗓️</h1>
+
+    <div class="today-reminder">
+      <h3 class="today-heading">Today’s Reminders</h3>
+      {% if reminders %}
+        <p>
+          {% for r in reminders %}
+            {{ r.time }} - {{ r.text }}<br/>
+          {% endfor %}
+        </p>
+      {% else %}
+        <p>No reminders for today.</p>
+      {% endif %}
+    </div>
+
+    <h2>Manage Reminders</h2>
+    <div id="reminder-list"></div>
+
+    <div class="button-container">
+      <button id="add-btn">➕ Add New Reminder</button>
+    </div>
+  </div>
+
+  <script>
+  window.reminders = {{ all_reminders|tojson }};
+  </script>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
