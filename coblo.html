@@ -1,0 +1,168 @@
+import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+void main() => runApp(EmergencyComfortApp());
+
+class EmergencyComfortApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Emergency Comfort',
+      debugShowCheckedModeBanner: false,
+      home: ComfortScreen(),
+    );
+  }
+}
+
+class ComfortScreen extends StatefulWidget {
+  @override
+  _ComfortScreenState createState() => _ComfortScreenState();
+}
+
+class _ComfortScreenState extends State<ComfortScreen>
+    with SingleTickerProviderStateMixin {
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _showComfortZone = false;
+  late AnimationController _breathController;
+  late Animation<double> _breathAnimation;
+
+  final String emergencyNumber = "tel:1234567890"; // change this
+
+  late YoutubePlayerController _ytController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Breathing animation setup
+    _breathController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 4),
+    )..repeat(reverse: true);
+
+    _breathAnimation = Tween<double>(begin: 100, end: 200).animate(
+      CurvedAnimation(parent: _breathController, curve: Curves.easeInOut),
+    );
+
+    // YouTube calming video
+    _ytController = YoutubePlayerController(
+      initialVideoId: YoutubePlayer.convertUrlToId(
+              'https://www.youtube.com/watch?v=2OEL4P1Rz04') ??
+          '',
+      flags: YoutubePlayerFlags(autoPlay: false),
+    );
+  }
+
+  void _activateComfort() async {
+    setState(() {
+      _showComfortZone = true;
+    });
+
+    await _audioPlayer.play(AssetSource('comfort.mp3'));
+  }
+
+  void _callEmergencyContact() async {
+    if (await canLaunchUrl(Uri.parse(emergencyNumber))) {
+      await launchUrl(Uri.parse(emergencyNumber));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Cannot make call")),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    _breathController.dispose();
+    _ytController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlue[50],
+      appBar: AppBar(
+        title: Text('Emergency Comfort'),
+        backgroundColor: Colors.redAccent,
+      ),
+      body: Center(
+        child: _showComfortZone
+            ? SingleChildScrollView(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Breathe. You\'re safe 💙',
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 20),
+
+                    // Breathing animation
+                    AnimatedBuilder(
+                      animation: _breathController,
+                      builder: (, _) {
+                        return Container(
+                          width: _breathAnimation.value,
+                          height: _breathAnimation.value,
+                          decoration: BoxDecoration(
+                            color: Colors.tealAccent,
+                            shape: BoxShape.circle,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Inhale... Exhale...",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        );
+                      },
+                    ),
+
+                    SizedBox(height: 30),
+                    Text('Playing calming music...',
+                        style: TextStyle(fontSize: 18)),
+                    Icon(Icons.music_note, size: 50, color: Colors.purple),
+
+                    SizedBox(height: 30),
+                    Text("Watch a calming video:", style: TextStyle(fontSize: 18)),
+                    SizedBox(height: 10),
+                    YoutubePlayer(
+                      controller: _ytController,
+                      showVideoProgressIndicator: true,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                    ),
+
+                    SizedBox(height: 30),
+                    ElevatedButton.icon(
+                      onPressed: _callEmergencyContact,
+                      icon: Icon(Icons.call),
+                      label: Text("Call Trusted Contact"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                        textStyle: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : ElevatedButton(
+                onPressed: _activateComfort,
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: Text('Emergency Comfort',
+                    style: TextStyle(fontSize: 20, color: Colors.white)),
+              ),
+      ),
+    );
+  }
+}

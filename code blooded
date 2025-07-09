@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Comfort Button</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .emergency-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff6b6b, #ee5a52);
+            border: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .emergency-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .emergency-button:active {
+            transform: scale(0.95);
+        }
+
+        .breathing-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 20px auto;
+            transition: all 4s ease-in-out;
+            display: none;
+        }
+
+        .breathing-circle.active {
+            display: block;
+        }
+
+        .breathing-circle.inhale {
+            transform: scale(1.5);
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .breathing-circle.exhale {
+            transform: scale(1);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .comfort-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .feature-button {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .grounding-list {
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .grounding-list.active {
+            display: block;
+        }
+
+        .grounding-list li {
+            margin: 10px 0;
+            padding: 5px 0;
+        }
+
+        .message {
+            font-size: 24px;
+            margin: 20px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .timer.active {
+            display: block;
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes" id="floatingShapes"></div>
+    
+    <div class="container">
+        <h1>Emergency Comfort Button</h1>
+        <p>You're safe. Take a moment to breathe.</p>
+        
+        <button class="emergency-button" id="emergencyButton">
+            I Need Comfort Now
+        </button>
+        
+        <div class="message" id="message">
+            Click the button when you need immediate comfort
+        </div>
+        
+        <div class="breathing-circle" id="breathingCircle"></div>
+        <div class="timer" id="timer"></div>
+        
+        <div class="comfort-features">
+            <button class="feature-button" onclick="startBreathing()">Breathing Exercise</button>
+            <button class="feature-button" onclick="showGrounding()">Grounding Technique</button>
+            <button class="feature-button" onclick="startTimer()">5-Minute Timer</button>
+            <button class="feature-button" onclick="showComfortMessage()">Comfort Message</button>
+        </div>
+        
+        <div class="grounding-list" id="groundingList">
+            <h3>5-4-3-2-1 Grounding Exercise:</h3>
+            <ol>
+                <li><strong>5 things you can see:</strong> Look around and name 5 things you can see</li>
+                <li><strong>4 things you can touch:</strong> Name 4 things you can feel or touch</li>
+                <li><strong>3 things you can hear:</strong> Listen and name 3 sounds you can hear</li>
+                <li><strong>2 things you can smell:</strong> Name 2 things you can smell</li>
+                <li><strong>1 thing you can taste:</strong> Name 1 thing you can taste</li>
+            </ol>
+            <p><em>Take your time with each sense. This helps bring you back to the present moment.</em></p>
+        </div>
+    </div>
+
+    <script>
+        const emergencyButton = document.getElementById('emergencyButton');
+        const message = document.getElementById('message');
+        const breathingCircle = document.getElementById('breathingCircle');
+        const timer = document.getElementById('timer');
+        const groundingList = document.getElementById('groundingList');
+        const floatingShapes = document.getElementById('floatingShapes');
+
+        // Comfort messages
+        const comfortMessages = [
+            "You are safe right now. This feeling will pass.",
+            "You are stronger than you think. You've gotten through difficult times before.",
+            "Take it one breath at a time. You don't have to figure everything out right now.",
+            "You are not alone. Many people care about you.",
+            "This is temporary. You will feel better soon.",
+            "You are doing the best you can, and that's enough.",
+            "It's okay to not be okay. You don't have to be perfect.",
+            "You are loved and worthy of love, exactly as you are.",
+            "Your feelings are valid. It's okay to feel this way.",
+            "You have survived 100% of your bad days so far. You will survive this too."
+        ];
+
+        // Create floating shapes
+        function createFloatingShapes() {
+            for (let i = 0; i < 10; i++) {
+                const shape = document.createElement('div');
+                shape.className = 'shape';
+                shape.style.left = Math.random() * 100 + '%';
+                shape.style.top = Math.random() * 100 + '%';
+                shape.style.animationDelay = Math.random() * 6 + 's';
+                shape.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                
+                // Random shape
+                const shapes = ['●', '◆', '■', '▲', '★'];
+                shape.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+                shape.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                
+                floatingShapes.appendChild(shape);
+            }
+        }
+
+        // Emergency button functionality
+        emergencyButton.addEventListener('click', function() {
+            // Visual feedback
+            this.style.background = 'radial-gradient(circle, #4CAF50, #45a049)';
+            this.textContent = 'You\'re Safe ❤️';
+            
+            // Show immediate comfort message
+            showRandomComfortMessage();
+            
+            // Start gentle breathing
+            startBreathing();
+            
+            // Reset button after 3 seconds
+            setTimeout(() => {
+                this.style.background = 'radial-gradient(circle, #ff6b6b, #ee5a52)';
+                this.textContent = 'I Need Comfort Now';
+            }, 3000);
+        });
+
+        function showRandomComfortMessage() {
+            const randomMessage = comfortMessages[Math.floor(Math.random() * comfortMessages.length)];
+            message.textContent = randomMessage;
+            message.style.color = '#fff';
+        }
+
+        function startBreathing() {
+            breathingCircle.classList.add('active');
+            let isInhaling = true;
+            
+            const breathingInterval = setInterval(() => {
+                if (isInhaling) {
+                    breathingCircle.classList.add('inhale');
+                    breathingCircle.classList.remove('exhale');
+                    message.textContent = 'Breathe in...';
+                } else {
+                    breathingCircle.classList.add('exhale');
+                    breathingCircle.classList.remove('inhale');
+                    message.textContent = 'Breathe out...';
+                }
+                isInhaling = !isInhaling;
+            }, 4000);
+            
+            // Stop after 2 minutes
+            setTimeout(() => {
+                clearInterval(breathingInterval);
+                breathingCircle.classList.remove('active', 'inhale', 'exhale');
+                message.textContent = 'How are you feeling now?';
+            }, 120000);
+        }
+
+        function showGrounding() {
+            groundingList.classList.toggle('active');
+            if (groundingList.classList.contains('active')) {
+                message.textContent = 'Focus on your senses. You are here, you are safe.';
+            } else {
+                message.textContent = 'Click the button when you need immediate comfort';
+            }
+        }
+
+        function startTimer() {
+            let timeLeft = 300; // 5 minutes in seconds
+            timer.classList.add('active');
+            
+            const countdown = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    timer.classList.remove('active');
+                    message.textContent = "Time's up. You've made it through this moment.";
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        function showComfortMessage() {
+            showRandomComfortMessage();
+        }
+
+        // Initialize floating shapes
+        createFloatingShapes();
+
+        // Add some gentle background music suggestion
+        console.log('💡 Tip: You can also play calming music or nature sounds in the background for additional comfort.');
+    </script>
+</body>
+</html> 
