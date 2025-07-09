@@ -3,7 +3,6 @@ import json
 import os
 import datetime
 
-
 app = Flask(__name__)
 
 @app.route("/")
